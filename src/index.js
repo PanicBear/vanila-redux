@@ -9,9 +9,11 @@ const ul = document.querySelector('ul');
 function reducer(state = [], action) {
   switch (action.type) {
     case 'ADD':
-      return [{ text: action.text, id: Date.now() }, ...state];
+      const newStateObject = { text: action.text, id: Date.now() };
+      return [newStateObject, ...state];
     case 'DELETE':
-      return state.filter(({ id }) => id !== action.id);
+      const newFilteredState = state.filter(({ id }) => id !== action.id);
+      return newFilteredState;
     default:
       return state;
   }
