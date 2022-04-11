@@ -1,37 +1,65 @@
-import { createStore } from 'redux';
+const { createStore } = require('redux');
 
-const add = document.getElementById('add');
-const minus = document.getElementById('minus');
-const number = document.querySelector('span');
+const store = createStore(reducer);
 
-number.innerText = 0;
+const form = document.querySelector('form');
+const input = document.querySelector('input');
+const ul = document.querySelector('ul');
 
-const countModifier = (count = 0, action) => {
-  console.log(count, action);
+function reducer(state = [], action) {
   switch (action.type) {
     case 'ADD':
-      count++;
-      break;
-    case 'MINUS':
-      count--;
-      break;
+      const newStateObject = { text: action.text, id: Date.now() };
+      return [newStateObject, ...state];
+    case 'DELETE':
+      const newFilteredState = state.filter(({ id }) => id !== action.id);
+      return newFilteredState;
     default:
-      count = 0;
-      break;
+      return state;
   }
-  return count;
+}
+
+const addTodo = (text) => {
+  return {
+    type: 'ADD',
+    text,
+  };
+};
+const deleteTodo = (id) => {
+  return {
+    type: 'DELETE',
+    id,
+  };
 };
 
-const countStore = createStore(countModifier);
+const dispatchAddTodo = (todo) => store.dispatch(addTodo(todo));
 
-const onChange = () => {
-  number.innerText = countStore.getState();
+const dispatchDeleteTodo = (e) => {
+  const id = parseInt(e.target.parentElement.id);
+  store.dispatch(deleteTodo(id));
 };
 
-countStore.subscribe(onChange);
+const paintTodos = () => {
+  const todos = store.getState();
+  ul.innerHTML = '';
+  todos.forEach(({ id, text }) => {
+    const li = document.createElement('li');
+    const btn = document.createElement('button');
+    btn.addEventListener('click', dispatchDeleteTodo);
+    btn.innerText = 'DEL';
+    li.id = id;
+    li.innerText = text;
+    li.appendChild(btn);
+    ul.appendChild(li);
+  });
+};
 
-const handleAdd = () => countStore.dispatch({ type: 'ADD' });
-const handleMinus = () => countStore.dispatch({ type: 'MINUS' });
+function onSubmit(e) {
+  e.preventDefault();
+  const todo = input.value;
+  input.value = '';
+  dispatchAddTodo(todo);
+}
 
-add.addEventListener('click', handleAdd);
-minus.addEventListener('click', handleMinus);
+form.addEventListener('submit', onSubmit);
+store.subscribe(paintTodos);
