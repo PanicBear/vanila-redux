@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
+import { connect } from 'react-redux';
 
-function Home() {
+function Home(props) {
+  console.log(props);
   const [text, setText] = useState('');
 
   function onChange(e) {
@@ -24,4 +26,9 @@ function Home() {
   );
 }
 
-export default Home;
+function mapStateToProps(state, ownProps) {
+  console.log(state, ownProps);
+  return { todos: state };
+}
+
+export default connect(mapStateToProps)(Home);
