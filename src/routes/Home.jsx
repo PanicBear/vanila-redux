@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { connect } from 'react-redux';
+import Todo from '../component/Todo';
+import { actionCreators } from '../store';
 
-function Home(props) {
-  console.log(props);
+function Home({ todos, addTodo, deleteTodo }) {
   const [text, setText] = useState('');
 
   function onChange(e) {
@@ -11,7 +12,8 @@ function Home(props) {
 
   function onSubmit(e) {
     e.preventDefault();
-    console.log(text);
+    addTodo(text);
+    setText('');
   }
 
   return (
@@ -21,14 +23,24 @@ function Home(props) {
         <input type="text" value={text} onChange={onChange} />
         <button>Add</button>
       </form>
-      <ul></ul>
+      <ul>
+        {todos.map((todo) => {
+          return <Todo {...todo} key={todo.id} />;
+        })}
+      </ul>
     </>
   );
 }
 
 function mapStateToProps(state, ownProps) {
-  console.log(state, ownProps);
   return { todos: state };
 }
 
-export default connect(mapStateToProps)(Home);
+function mapDispatchToProps(dispatch) {
+  return {
+    addTodo: (text) => dispatch(actionCreators.addTodo(text)),
+    deleteTodo: (id) => dispatch(actionCreators.deleteTodo(id)),
+  };
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Home);
