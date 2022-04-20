@@ -1,8 +1,9 @@
 import React from 'react';
-import { connect } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { useParams } from 'react-router';
 
-function Detail({ todos }) {
+function Detail() {
+  const todos = useSelector((state) => state);
   const { id } = useParams();
   const { text } = todos.find((todo) => todo.id === parseInt(id));
   return (
@@ -13,8 +14,4 @@ function Detail({ todos }) {
   );
 }
 
-function mapStateToProps(state, ownProps) {
-  return { todos: state };
-}
-
-export default connect(mapStateToProps)(Detail);
+export default Detail;
