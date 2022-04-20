@@ -1,9 +1,15 @@
 import React from 'react';
-import { connect } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { remove } from '../store';
 
-function Todo({ text, onClick, id }) {
+function Todo({ text, id }) {
+  const dispatch = useDispatch();
+
+  const onClick = () => {
+    return dispatch(remove(id));
+  };
+
   return (
     <li>
       <Link to={`/${id}`}>{text}</Link>
@@ -12,12 +18,4 @@ function Todo({ text, onClick, id }) {
   );
 }
 
-function mapDispatcherToProps(dispatch, ownProps) {
-  return {
-    onClick: () => {
-      return dispatch(remove(ownProps.id));
-    },
-  };
-}
-
-export default connect(null, mapDispatcherToProps)(Todo);
+export default Todo;
